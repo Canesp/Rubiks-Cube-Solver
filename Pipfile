@@ -6,8 +6,11 @@ name = "pypi"
 [packages]
 gym = "*"
 numpy = "*"
+pygame = "*"
 
 [dev-packages]
+ipykernel = "*"
+black = "*"
 
 [requires]
 python_version = "3.11"
