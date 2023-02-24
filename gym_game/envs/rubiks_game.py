@@ -37,17 +37,35 @@ color_dict = {
     "w": pygame.Color(255, 255, 255)
 }
 
-# dict with matrix of cubes sides in rows and cols. 
-cube_dict = {
+# list if all side names
+side_list = ["front", "back", "top", "right", "left", "bottom"]
 
-    "front": np.array(["r", "r", "w", "r", "r", "r", "r", "r", "r"]).reshape(3, 3),
-    "back": np.array(["r", "r", "r", "r", "r", "r", "r", "r", "r"]).reshape(3, 3),
-    "top": np.array(["r", "r", "r", "r", "r", "r", "r", "r", "r"]).reshape(3, 3),
-    "right": np.array(["r", "r", "r", "r", "g", "r", "r", "r", "r"]).reshape(3, 3),
-    "left": np.array(["r", "r", "r", "r", "r", "r", "r", "r", "r"]).reshape(3, 3),
-    "bottom": np.array(["r", "r", "r", "b", "r", "r", "r", "r", "r"]).reshape(3, 3)
+def generate_cube(color_dict: dict, side_names: list):
 
-}
+    # list that holds all colors for the cube.
+    cube_list = []
+    # dict that holds all cube information.
+    cube_dict = {}
+
+    # fills the list with colors 
+    for i in color_dict:
+
+        for _ in range(9):
+
+            cube_list.append(i)
+
+    # shuffles the list for random 
+    np.random.shuffle(cube_list)
+    
+    num_cubes = int(len(cube_list) / len(side_names))
+
+    for x, i in enumerate(side_names):
+
+        cube_dict[i] = np.array(cube_list[(x * num_cubes):(num_cubes * (x + 1))]).reshape(3, 3)
+
+    return cube_dict
+
+cube_dict = generate_cube(color_dict, side_list)
 
 def draw_cubes(cube_array: np.array, cube_width: int, cube_height: int, margin: int, start_pos: tuple):
 
@@ -151,8 +169,14 @@ while True:
 
     # to stop the game from craching and a way to close the game
     for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
 
+        if event.type == pygame.KEYDOWN:
+
+            if event.key == pygame.K_UP:
                 pygame.quit()
                 quit()
+
+            if event.key == pygame.K_DOWN:
+
+                cube_dict = generate_cube(color_dict, side_list)
+                
