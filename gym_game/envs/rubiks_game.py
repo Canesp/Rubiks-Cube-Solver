@@ -145,7 +145,7 @@ def display_cube(cube_dict: dict, cube_width: int, cube_height: int, margin: int
 
 
 
-def cube_movement(cube_dict: dict, rules: list, col: int, forwards: bool):
+def cube_movement(cube_dict: dict, rules: list, col: int, forwards: bool, T: bool):
 
     # Creates a new cube dict.
     new_cube = {}
@@ -172,31 +172,61 @@ def cube_movement(cube_dict: dict, rules: list, col: int, forwards: bool):
         # if rules dont have rotate.
         else:
 
-            # creates a new vector dict. 
-            vector_dict = {}
+            if T == True:
 
-            # gets the range of vector (len of row).
-            n = range(0, len(cube_dict[i[f]][f]))
+                # creates a new vector dict. 
+                vector_dict = {}
 
-            # adds the row of new cube to dict. 
-            vector_dict[col] = cube_dict[i[f]].T[col]
-            
-            # Creates a list of all columns. [0, 1, 2]
-            m = list(n)
-            # Removes the chosen column.
-            m.remove(col)
+                # gets the range of vector (len of row).
+                n = range(0, len(cube_dict[i[f]][f]))
 
-            # loops throg the remaining columns.
-            for x in m:
+                # adds the row of new cube to dict. 
+                vector_dict[col] = cube_dict[i[f]].T[col]
                 
-                # add the remaing columns to new vector dict.
-                vector_dict[x] = cube_dict[i[t]].T[x]
+                # Creates a list of all columns. [0, 1, 2]
+                m = list(n)
+                # Removes the chosen column.
+                m.remove(col)
 
-            # sorts and creates a new matrix based on vector dict (sorts so rows goes in right order).
-            new_vector = np.array([vector_dict[y] for y in range(len(vector_dict))]).reshape(3, 3).T
+                # loops throg the remaining columns.
+                for x in m:
+                    
+                    # add the remaing columns to new vector dict.
+                    vector_dict[x] = cube_dict[i[t]].T[x]
 
-            # add new matrix to new cube dict.
-            new_cube[i[t]] = new_vector
+                # sorts and creates a new matrix based on vector dict (sorts so rows goes in right order).
+                new_vector = np.array([vector_dict[y] for y in range(len(vector_dict))]).reshape(3, 3).T
+
+                # add new matrix to new cube dict.
+                new_cube[i[t]] = new_vector
+            
+            else: 
+
+                # creates a new vector dict. 
+                vector_dict = {}
+
+                # gets the range of vector (len of row).
+                n = range(0, len(cube_dict[i[f]][f]))
+
+                # adds the row of new cube to dict. 
+                vector_dict[col] = cube_dict[i[f]][col]
+                
+                # Creates a list of all columns. [0, 1, 2]
+                m = list(n)
+                # Removes the chosen column.
+                m.remove(col)
+
+                # loops throg the remaining columns.
+                for x in m:
+                    
+                    # add the remaing columns to new vector dict.
+                    vector_dict[x] = cube_dict[i[t]][x]
+
+                # sorts and creates a new matrix based on vector dict (sorts so rows goes in right order).
+                new_vector = np.array([vector_dict[y] for y in range(len(vector_dict))]).reshape(3, 3)
+
+                # add new matrix to new cube dict.
+                new_cube[i[t]] = new_vector
 
     # returns new cube dict. 
     return new_cube
@@ -229,28 +259,80 @@ while True:
     for event in pygame.event.get():
 
         if event.type == pygame.KEYDOWN:
-
+            
+            # quit()
             if event.key == pygame.K_UP:
                 pygame.quit()
                 quit()
 
+            # reset colors / randomze 
             if event.key == pygame.K_DOWN:
 
                 cube_dict = generate_cube(color_dict, side_list)
                 
-
+            # rotate backwards 
             if event.key == pygame.K_KP1:
 
                 rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["rotate", "left", 1], ["right", "right"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False)
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False, T= True)
             
             if event.key == pygame.K_KP2:
 
                 rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["right", "right"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False)
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False, T= True)
 
             if event.key == pygame.K_KP3:
 
                 rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["rotate", "right", -1]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False)
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False, T= True)
+
+            # rotate forwards 
+            if event.key == pygame.K_KP4:
+
+                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["rotate", "left", -1], ["right", "right"]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= True, T= True)
+            
+            if event.key == pygame.K_KP5:
+
+                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["right", "right"]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= True, T= True)
+
+            if event.key == pygame.K_KP6:
+
+                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["rotate", "right", 1]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= True, T= True)
+
+            # rotate right
+            if event.key == pygame.K_KP7:
+
+                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["rotate", "top", 1], ["bottom", "bottom"]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False, T= False)
+
+            if event.key == pygame.K_KP8:
+
+                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["bottom", "bottom"]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False, T= False)
+
+            if event.key == pygame.K_KP9:
+
+                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["rotate", "bottom", -1]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False, T= False)
+
+            # rotate left 
+            if event.key == pygame.K_b:
+
+                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["rotate", "top", -1], ["bottom", "bottom"]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= True, T= False)
+
+            if event.key == pygame.K_n:
+
+                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["bottom", "bottom"]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= True, T= False)
+
+            if event.key == pygame.K_m:
+
+                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["rotate", "bottom", 1]]
+                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= True, T= False)
+                
+
                 
