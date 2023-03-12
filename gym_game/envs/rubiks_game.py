@@ -13,6 +13,9 @@ fps = pygame.time.Clock()
 
 score = 0 
 
+#Game over 
+gameOver = False
+
 # function to display/show the score text.
 def display_score():
 
@@ -231,7 +234,23 @@ def cube_movement(cube_dict: dict, rules: list, col: int, forwards: bool, T: boo
     # returns new cube dict. 
     return new_cube
 
+# checks if all cubes have the same color and if stops the game.
+def check_gameover(cube_dict: dict):
+
+    # a list to hold all checked indexs.
+    check_list = []
+
+    # loops through the dict.
+    for i in cube_dict:
         
+        # reshapes the matrix to an array.
+        reshaped_matrix = np.ravel(cube_dict[i])
+
+        # adds True or False if all indexes is same.
+        check_list.append(np.all(cube_dict[i] == reshaped_matrix[0]))
+
+    # returns true or false if all indexs is True or False 
+    return (np.all(check_list) == True  )       
 
         
                 
@@ -247,7 +266,7 @@ while True:
 
     
 
-    
+    gameOver = check_gameover(cube_dict= cube_dict)
 
     display_cube(cube_dict, 20, 20, margin= 5)
 
@@ -269,70 +288,72 @@ while True:
             if event.key == pygame.K_DOWN:
 
                 cube_dict = generate_cube(color_dict, side_list)
+            
+            if gameOver != True:
+
+                # rotate backwards 
+                if event.key == pygame.K_KP1:
+
+                    rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["rotate", "left", 1], ["right", "right"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False, T= True)
                 
-            # rotate backwards 
-            if event.key == pygame.K_KP1:
+                if event.key == pygame.K_KP2:
 
-                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["rotate", "left", 1], ["right", "right"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False, T= True)
-            
-            if event.key == pygame.K_KP2:
+                    rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["right", "right"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False, T= True)
 
-                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["right", "right"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False, T= True)
+                if event.key == pygame.K_KP3:
 
-            if event.key == pygame.K_KP3:
+                    rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["rotate", "right", -1]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False, T= True)
 
-                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["rotate", "right", -1]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False, T= True)
+                # rotate forwards 
+                if event.key == pygame.K_KP4:
 
-            # rotate forwards 
-            if event.key == pygame.K_KP4:
+                    rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["rotate", "left", -1], ["right", "right"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= True, T= True)
+                
+                if event.key == pygame.K_KP5:
 
-                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["rotate", "left", -1], ["right", "right"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= True, T= True)
-            
-            if event.key == pygame.K_KP5:
+                    rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["right", "right"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= True, T= True)
 
-                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["right", "right"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= True, T= True)
+                if event.key == pygame.K_KP6:
 
-            if event.key == pygame.K_KP6:
+                    rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["rotate", "right", 1]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= True, T= True)
 
-                rules_up = [["front", "top"], ["top", "back"], ["back", "bottom"], ["bottom", "front"], ["left", "left"], ["rotate", "right", 1]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= True, T= True)
+                # rotate right
+                if event.key == pygame.K_KP7:
 
-            # rotate right
-            if event.key == pygame.K_KP7:
+                    rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["rotate", "top", 1], ["bottom", "bottom"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False, T= False)
 
-                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["rotate", "top", 1], ["bottom", "bottom"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= False, T= False)
+                if event.key == pygame.K_KP8:
 
-            if event.key == pygame.K_KP8:
+                    rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["bottom", "bottom"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False, T= False)
 
-                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["bottom", "bottom"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= False, T= False)
+                if event.key == pygame.K_KP9:
 
-            if event.key == pygame.K_KP9:
+                    rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["rotate", "bottom", -1]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False, T= False)
 
-                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["rotate", "bottom", -1]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= False, T= False)
+                # rotate left 
+                if event.key == pygame.K_b:
 
-            # rotate left 
-            if event.key == pygame.K_b:
+                    rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["rotate", "top", -1], ["bottom", "bottom"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= True, T= False)
 
-                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["rotate", "top", -1], ["bottom", "bottom"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 0, forwards= True, T= False)
+                if event.key == pygame.K_n:
 
-            if event.key == pygame.K_n:
+                    rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["bottom", "bottom"]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= True, T= False)
 
-                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["bottom", "bottom"]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 1, forwards= True, T= False)
+                if event.key == pygame.K_m:
 
-            if event.key == pygame.K_m:
-
-                rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["rotate", "bottom", 1]]
-                cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= True, T= False)
+                    rules_up = [["front", "right"], ["right", "back"], ["back", "left"], ["left", "front"], ["top", "top"], ["rotate", "bottom", 1]]
+                    cube_dict = cube_movement(cube_dict= cube_dict, rules= rules_up, col= 2, forwards= True, T= False)
                 
 
                 
